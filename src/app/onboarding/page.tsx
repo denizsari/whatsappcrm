@@ -15,7 +15,7 @@ import {
   Scissors, Home, Briefcase, Car, Utensils, Dumbbell,
   GraduationCap, Heart, Wrench, Shirt, Camera, Music,
   Stethoscope, PaintBucket, Hammer, Laptop, Phone,
-  Smartphone, Wifi, Loader, AlertCircle, QrCode, Calendar,
+  Smartphone, Wifi, Loader, Loader2, AlertCircle, QrCode, Calendar,
   Gift, Rocket
 } from "lucide-react"
 
