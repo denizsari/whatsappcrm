@@ -457,40 +457,26 @@ export default function OnboardingPage() {
     setWhatsappState(prev => ({ ...prev, isConnecting: true }))
     
     try {
-      const response = await fetch('/api/onboarding/whatsapp', {
+      // Meta OAuth URL'ini al
+      const response = await fetch('/api/auth/meta/url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          businessId,
-          action: 'connect'
-        })
+        body: JSON.stringify({ businessId })
       })
       
       const data = await response.json()
-      if (data.success) {
-        setWhatsappState(prev => ({
-          ...prev,
-          isConnected: true,
-          isConnecting: false,
-          connectionMessage: "WhatsApp başarıyla bağlandı! 🎉"
-        }))
-        
-        // Kutlama göster
-        triggerCelebration(
-          "🎉 WhatsApp Bağlandı!",
-          "Test mesajı gönderiliyor...",
-          <CheckCircle className="h-5 w-5" />
-        )
-        
-        // 2 saniye sonra test mesajı gönder
-        setTimeout(() => sendTestMessage(), 2000)
+      if (data.success && data.authUrl) {
+        // Meta OAuth sayfasına yönlendir
+        window.location.href = data.authUrl
+      } else {
+        throw new Error('Meta OAuth URL alınamadı')
       }
     } catch (error) {
-      console.error('WhatsApp connection error:', error)
+      console.error('Meta OAuth error:', error)
       setWhatsappState(prev => ({
         ...prev,
         isConnecting: false,
-        connectionMessage: "Bağlantı sırasında hata oluştu"
+        connectionMessage: "Meta bağlantısı sırasında hata oluştu"
       }))
     }
   }
@@ -1272,91 +1258,58 @@ export default function OnboardingPage() {
         <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto">
           <Smartphone className="h-8 w-8 text-green-600" />
         </div>
-        <h2 className="text-2xl font-bold text-slate-900">WhatsApp'ı Bağlayın</h2>
-        <p className="text-gray-600">Müşterilerinizle iletişim kurabilmek için WhatsApp hesabınızı bağlayın</p>
+        <h2 className="text-2xl font-bold text-slate-900">WhatsApp Business'ı Bağlayın</h2>
+        <p className="text-gray-600">Meta hesabınızı kullanarak WhatsApp Business'ınızı hızlıca bağlayın</p>
       </div>
 
       {!whatsappState.isConnected ? (
         <Card className="max-w-2xl mx-auto">
           <CardContent className="p-8">
-            {!whatsappState.showQR ? (
-              <div className="text-center space-y-6">
-                <div className="space-y-4">
-                  <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto">
-                    <QrCode className="h-8 w-8 text-green-600" />
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900">QR Kod ile Bağlan</h3>
-                  <p className="text-gray-600">
-                    WhatsApp Web QR kodunu oluşturmak için butona tıklayın
-                  </p>
+            <div className="text-center space-y-6">
+              <div className="space-y-4">
+                <div className="w-20 h-20 bg-blue-100 rounded-3xl flex items-center justify-center mx-auto">
+                  <svg className="h-10 w-10 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
                 </div>
-                
-                <Button
-                  onClick={generateQRCode}
-                  disabled={whatsappState.isConnecting || !businessId}
-                  className="bg-green-600 hover:bg-green-700 w-full h-12"
-                >
-                  {whatsappState.isConnecting ? (
-                    <>
-                      <Loader className="animate-spin h-4 w-4 mr-2" />
-                      QR Kod Oluşturuluyor...
-                    </>
-                  ) : (
-                    <>
-                      <QrCode className="h-4 w-4 mr-2" />
-                      QR Kod Oluştur
-                    </>
-                  )}
-                </Button>
+                <h3 className="text-xl font-bold text-slate-900">Meta ile Hızlı Bağlantı</h3>
+                <p className="text-gray-600">
+                  Meta hesabınızı kullanarak WhatsApp Business hesabınızı güvenli şekilde bağlayın
+                </p>
               </div>
-            ) : (
-              <div className="text-center space-y-6">
-                <h3 className="text-xl font-bold text-slate-900">QR Kodu Okutun</h3>
-                
-                {/* QR Code Display */}
-                <div className="bg-white p-6 rounded-2xl border-2 border-gray-200 inline-block">
-                  <img 
-                    src={whatsappState.qrCode} 
-                    alt="WhatsApp QR Code" 
-                    className="w-48 h-48 mx-auto"
-                  />
-                </div>
-                
-                <div className="space-y-4">
-                  <p className="text-gray-600">
-                    {whatsappState.connectionMessage}
-                  </p>
-                  
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h4 className="font-semibold text-blue-900 mb-2">Nasıl Bağlanırım?</h4>
-                    <ol className="text-sm text-blue-800 space-y-1 text-left">
-                      <li>1. Telefonunuzda WhatsApp'ı açın</li>
-                      <li>2. Ayarlar → Bağlı Cihazlar'a gidin</li>
-                      <li>3. "Cihaz Bağla" butonuna tıklayın</li>
-                      <li>4. Bu QR kodu telefonunuzla okutun</li>
-                    </ol>
-                  </div>
-                  
-                  <Button
-                    onClick={connectWhatsApp}
-                    disabled={whatsappState.isConnecting}
-                    className="bg-blue-600 hover:bg-blue-700 w-full"
-                  >
-                    {whatsappState.isConnecting ? (
-                      <>
-                        <Loader className="animate-spin h-4 w-4 mr-2" />
-                        Bağlanıyor...
-                      </>
-                    ) : (
-                      <>
-                        <Wifi className="h-4 w-4 mr-2" />
-                        Bağlandım (Demo)
-                      </>
-                    )}
-                  </Button>
-                </div>
+              
+              <Button
+                onClick={connectWhatsApp}
+                disabled={whatsappState.isConnecting || !businessId}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg font-semibold rounded-xl"
+              >
+                {whatsappState.isConnecting ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                    Meta'ya yönlendiriliyor...
+                  </>
+                ) : (
+                  <>
+                    <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                    Meta ile Bağlan
+                  </>
+                )}
+              </Button>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-900 mb-2">Güvenli Bağlantı</h4>
+                <ul className="text-sm text-blue-800 space-y-1 text-left">
+                  <li>• Meta OAuth ile güvenli bağlantı</li>
+                  <li>• WhatsApp Business API erişimi</li>
+                  <li>• Profesyonel mesajlaşma özellikleri</li>
+                  <li>• Otomatik webhook kurulumu</li>
+                </ul>
               </div>
-            )}
+            </div>
+
+
           </CardContent>
         </Card>
       ) : (
@@ -1370,7 +1323,7 @@ export default function OnboardingPage() {
               
               <div>
                 <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                  🎉 WhatsApp Başarıyla Bağlandı!
+                  🎉 WhatsApp Business Başarıyla Bağlandı!
                 </h3>
                 <p className="text-green-700 font-medium">
                   {whatsappState.connectionMessage}
