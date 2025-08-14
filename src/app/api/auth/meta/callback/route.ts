@@ -11,11 +11,11 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Meta OAuth error:', error)
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/dashboard?error=meta_auth_failed`)
+      return NextResponse.redirect(new URL('/dashboard?error=meta_auth_failed', request.url))
     }
 
     if (!code || !state) {
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/dashboard?error=invalid_callback`)
+      return NextResponse.redirect(new URL('/dashboard?error=invalid_callback', request.url))
     }
 
     const supabase = createClient()
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/auth`)
+      return NextResponse.redirect(new URL('/auth', request.url))
     }
 
     // Exchange code for access token
@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
 
     if (updateError) {
       console.error('Database update error:', updateError)
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/dashboard?error=database_error`)
+      return NextResponse.redirect(new URL('/dashboard?error=database_error', request.url))
     }
 
     // Success redirect
@@ -90,13 +90,13 @@ export async function GET(request: NextRequest) {
     })
 
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_URL}/dashboard/whatsapp?${successParams.toString()}`
+      new URL(`/dashboard/whatsapp?${successParams.toString()}`, request.url)
     )
 
   } catch (error) {
     console.error('Meta OAuth callback error:', error)
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_URL}/dashboard?error=meta_connection_failed`
+      new URL('/dashboard?error=meta_connection_failed', request.url)
     )
   }
 }
