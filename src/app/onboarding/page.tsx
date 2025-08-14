@@ -43,7 +43,9 @@ export default function OnboardingPage() {
     isConnecting: false,
     isConnected: false,
     connectionMessage: "",
-    showQR: false
+    showQR: false,
+    showMetaGuide: false,
+    isDemoMode: false
   })
   
   // Business ID (auth'dan gelir)
@@ -1263,55 +1265,208 @@ export default function OnboardingPage() {
       </div>
 
       {!whatsappState.isConnected ? (
-        <Card className="max-w-2xl mx-auto">
-          <CardContent className="p-8">
-            <div className="text-center space-y-6">
-              <div className="space-y-4">
-                <div className="w-20 h-20 bg-blue-100 rounded-3xl flex items-center justify-center mx-auto">
-                  <svg className="h-10 w-10 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-slate-900">Meta ile Hızlı Bağlantı</h3>
-                <p className="text-gray-600">
-                  Meta hesabınızı kullanarak WhatsApp Business hesabınızı güvenli şekilde bağlayın
-                </p>
-              </div>
-              
-              <Button
-                onClick={connectWhatsApp}
-                disabled={whatsappState.isConnecting || !businessId}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg font-semibold rounded-xl"
-              >
-                {whatsappState.isConnecting ? (
-                  <>
-                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                    Meta'ya yönlendiriliyor...
-                  </>
-                ) : (
-                  <>
-                    <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+        <div className="space-y-6">
+          {/* Ana Bağlantı Seçenekleri */}
+          <Card className="max-w-2xl mx-auto">
+            <CardContent className="p-8">
+              <div className="text-center space-y-6">
+                <div className="space-y-4">
+                  <div className="w-20 h-20 bg-blue-100 rounded-3xl flex items-center justify-center mx-auto">
+                    <svg className="h-10 w-10 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                     </svg>
-                    Meta ile Bağlan
-                  </>
-                )}
-              </Button>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900">Meta ile Profesyonel Bağlantı</h3>
+                  <p className="text-gray-600">
+                    En iyi deneyim için Meta Business hesabınızı kullanın
+                  </p>
+                </div>
+                
+                <Button
+                  onClick={connectWhatsApp}
+                  disabled={whatsappState.isConnecting || !businessId}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg font-semibold rounded-xl w-full"
+                >
+                  {whatsappState.isConnecting ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                      Meta'ya yönlendiriliyor...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                      </svg>
+                      Meta Business ile Bağlan
+                    </>
+                  )}
+                </Button>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-900 mb-2">Güvenli Bağlantı</h4>
-                <ul className="text-sm text-blue-800 space-y-1 text-left">
-                  <li>• Meta OAuth ile güvenli bağlantı</li>
-                  <li>• WhatsApp Business API erişimi</li>
-                  <li>• Profesyonel mesajlaşma özellikleri</li>
-                  <li>• Otomatik webhook kurulumu</li>
-                </ul>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-blue-900 mb-2">✨ Profesyonel Özellikler</h4>
+                  <ul className="text-sm text-blue-800 space-y-1 text-left">
+                    <li>• WhatsApp Business API erişimi</li>
+                    <li>• Otomatik mesaj gönderme</li>
+                    <li>• Gelişmiş analitik raporlar</li>
+                    <li>• Çoklu cihaz desteği</li>
+                  </ul>
+                </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Alternatif Seçenekler */}
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-4">
+              <p className="text-sm text-gray-500">Meta hesabınız yok mu?</p>
             </div>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Meta Hesabı Oluşturma */}
+              <Card className="border-orange-200 bg-orange-50">
+                <CardContent className="p-6">
+                  <div className="text-center space-y-4">
+                    <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto">
+                      <svg className="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-900 mb-2">Meta Hesabı Oluştur</h4>
+                      <p className="text-sm text-gray-600 mb-4">
+                        5 dakikada ücretsiz Meta Business hesabı açın
+                      </p>
+                      <Button
+                        onClick={() => setWhatsappState(prev => ({ ...prev, showMetaGuide: true }))}
+                        variant="outline"
+                        className="border-orange-300 text-orange-700 hover:bg-orange-100 w-full"
+                      >
+                        Rehberi Göster
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
+              {/* Demo Modu */}
+              <Card className="border-gray-200 bg-gray-50">
+                <CardContent className="p-6">
+                  <div className="text-center space-y-4">
+                    <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto">
+                      <svg className="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-900 mb-2">Demo ile Devam Et</h4>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Sistemi keşfedin, daha sonra bağlayın
+                      </p>
+                      <Button
+                        onClick={() => {
+                          setWhatsappState(prev => ({
+                            ...prev,
+                            isConnected: true,
+                            connectionMessage: "Demo modu aktif! Gerçek bağlantı için Meta hesabı gereklidir.",
+                            isDemoMode: true
+                          }))
+                        }}
+                        variant="outline"
+                        className="border-gray-300 text-gray-700 hover:bg-gray-100 w-full"
+                      >
+                        Demo Modu
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
 
-          </CardContent>
-        </Card>
+          {/* Meta Rehberi Modal */}
+          {whatsappState.showMetaGuide && (
+            <Card className="max-w-2xl mx-auto border-orange-200 bg-orange-50">
+              <CardContent className="p-8">
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold text-slate-900 mb-2">
+                      📋 Meta Business Hesabı Nasıl Açılır?
+                    </h3>
+                    <p className="text-gray-600">5 dakikalık basit adımlar</p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">1</div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900">Meta Developer Console'a Gidin</h4>
+                        <p className="text-sm text-gray-600">
+                          <a href="https://developers.facebook.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                            developers.facebook.com
+                          </a> adresini ziyaret edin
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-3">
+                      <div className="w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">2</div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900">Facebook/Meta Hesabı ile Giriş Yapın</h4>
+                        <p className="text-sm text-gray-600">Mevcut Facebook hesabınızı kullanın veya yeni hesap açın</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-3">
+                      <div className="w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">3</div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900">Yeni Uygulama Oluşturun</h4>
+                        <p className="text-sm text-gray-600">"Create App" butonuna tıklayın ve "Business" tipini seçin</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-3">
+                      <div className="w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">4</div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900">WhatsApp Business API Ekleyin</h4>
+                        <p className="text-sm text-gray-600">Uygulamanızdan "WhatsApp" ürününü ekleyin</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-3">
+                      <div className="w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">5</div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900">Telefon Numaranızı Doğrulayın</h4>
+                        <p className="text-sm text-gray-600">WhatsApp kullandığınız telefon numarasını ekleyin</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-3">
+                    <Button
+                      onClick={() => window.open('https://developers.facebook.com', '_blank')}
+                      className="bg-orange-600 hover:bg-orange-700 text-white flex-1"
+                    >
+                      Meta Developer'a Git
+                    </Button>
+                    <Button
+                      onClick={() => setWhatsappState(prev => ({ ...prev, showMetaGuide: false }))}
+                      variant="outline"
+                      className="border-orange-300 text-orange-700"
+                    >
+                      Kapat
+                    </Button>
+                  </div>
+
+                  <div className="bg-orange-100 border border-orange-200 rounded-lg p-4">
+                    <p className="text-sm text-orange-800">
+                      💡 <strong>İpucu:</strong> Meta hesabı oluşturduktan sonra bu sayfaya geri dönüp "Meta Business ile Bağlan" butonunu kullanabilirsiniz.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       ) : (
         /* Connection Success */
         <Card className="max-w-2xl mx-auto border-green-200 bg-green-50">
@@ -1323,23 +1478,38 @@ export default function OnboardingPage() {
               
               <div>
                 <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                  🎉 WhatsApp Business Başarıyla Bağlandı!
+                  {whatsappState.isDemoMode ? '⚡ Demo Modu Aktif!' : '🎉 WhatsApp Business Başarıyla Bağlandı!'}
                 </h3>
-                <p className="text-green-700 font-medium">
+                <p className={`font-medium ${whatsappState.isDemoMode ? 'text-orange-700' : 'text-green-700'}`}>
                   {whatsappState.connectionMessage}
                 </p>
               </div>
               
-              <div className="bg-white border border-green-200 rounded-lg p-4">
-                <div className="flex items-center justify-center space-x-2 mb-3">
-                  <Sparkles className="h-5 w-5 text-yellow-500" />
-                  <span className="font-semibold text-slate-900">Güven Testi Tamamlandı</span>
-                  <Sparkles className="h-5 w-5 text-yellow-500" />
-                </div>
-                <p className="text-sm text-gray-600">
-                  Sistem test mesajı gönderildi. Telefonunuzu kontrol ederek 
-                  bağlantının çalıştığını teyit edebilirsiniz.
-                </p>
+              <div className={`bg-white rounded-lg p-4 ${whatsappState.isDemoMode ? 'border border-orange-200' : 'border border-green-200'}`}>
+                {whatsappState.isDemoMode ? (
+                  <div className="text-center">
+                    <div className="flex items-center justify-center space-x-2 mb-3">
+                      <svg className="h-5 w-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      <span className="font-semibold text-slate-900">Demo Modu Aktif</span>
+                    </div>
+                    <p className="text-sm text-orange-700">
+                      Sistemi keşfedin, tüm özellikler simülasyon modunda çalışıyor
+                    </p>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <div className="flex items-center justify-center space-x-2 mb-3">
+                      <Sparkles className="h-5 w-5 text-yellow-500" />
+                      <span className="font-semibold text-slate-900">Meta OAuth Başarılı</span>
+                      <Sparkles className="h-5 w-5 text-yellow-500" />
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      WhatsApp Business API bağlantısı aktif, sistem kullanıma hazır!
+                    </p>
+                  </div>
+                )}
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -1361,17 +1531,19 @@ export default function OnboardingPage() {
         </Card>
       )}
       
-      {/* WhatsApp Business Info */}
-      <Card className="max-w-2xl mx-auto bg-gray-50">
+      {/* Bilgi Kutusu */}
+      <Card className="max-w-2xl mx-auto bg-blue-50 border-blue-200">
         <CardContent className="p-6">
           <div className="flex items-start space-x-3">
             <AlertCircle className="h-5 w-5 text-blue-600 mt-1" />
             <div>
-              <h4 className="font-semibold text-slate-900 mb-2">WhatsApp Business Hesabı</h4>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                En iyi deneyim için WhatsApp Business hesabı kullanmanızı öneririz. 
-                Normal WhatsApp hesabı da çalışır ancak bazı profesyonel özellikler sınırlı olabilir.
-              </p>
+              <h4 className="font-semibold text-slate-900 mb-2">💡 Neden Meta Business Hesabı?</h4>
+              <div className="text-sm text-gray-600 space-y-2">
+                <p><strong>✅ Profesyonel Özellikler:</strong> WhatsApp Business API, otomatik mesajlar, webhook entegrasyonu</p>
+                <p><strong>✅ Güvenilirlik:</strong> Meta'nın resmi API'si ile güvenli bağlantı</p>
+                <p><strong>✅ Sınırsız:</strong> Çoklu cihaz desteği, gelişmiş analitik, sınırsız mesaj</p>
+                <p><strong>⚡ Hızlı Kurulum:</strong> 5 dakikada ücretsiz hesap açabilirsiniz</p>
+              </div>
             </div>
           </div>
         </CardContent>
