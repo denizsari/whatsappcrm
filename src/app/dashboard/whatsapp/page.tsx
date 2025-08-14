@@ -66,7 +66,7 @@ export default function WhatsAppPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ businessId })
+        body: JSON.stringify({ businessId: business?.id })
       })
 
       if (response.ok) {
@@ -93,7 +93,7 @@ export default function WhatsAppPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ businessId })
+        body: JSON.stringify({ businessId: business?.id })
       })
 
       if (response.ok) {
